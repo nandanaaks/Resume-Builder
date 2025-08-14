@@ -18,7 +18,7 @@ function ResumeGenerator() {
 
         </div>
         <div className='col-1'></div>
-        <div className='col-4 border shadow p-5'>
+        <div className='col-4 border shadow p-5 text-center'>
           <HiOutlineDocumentDownload className='text-danger fs-1 mb-3'/>
           <h4>Download your Resume</h4>
           <p>Download ans start applying</p>
@@ -26,9 +26,9 @@ function ResumeGenerator() {
           <h5>Step 2</h5>
         </div>
       </div>
-       <Link to={'/resume'}>
-              <button className='btn btn-primary'>Make Your Resume</button>
-            </Link>
+      <div className='text-center mb-5'>
+        <Link to={'/form'} className='btn text-light' style={{backgroundColor:'purple'}}>LET'S START</Link>
+        </div>
     </div>
   )
 }
