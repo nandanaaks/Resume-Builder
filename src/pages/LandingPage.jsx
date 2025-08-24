@@ -6,7 +6,7 @@ const LandingPage = () => {
         <>
             <section className='container-fluid row align-items-center' style={{ width: '100%', overflow: 'hidden', height: '100vh', backgroundImage: "url('https://www.cpasitesolutions.com/cpa-websites/wp-content/uploads/2024/06/local-seo-for-bookeepers-1.png')", backgroundAttachment: 'fixed', backgroundPosition: 'top', backgroundSize: 'cover' }}>
 
-                <div className="row py-5 ">
+                <div className="row align-items-center">
                     <div className="col-12 col-md-4"></div>
                     <div className="col-12 col-md-4 shadow py-5 rounded text-center" style={{ backgroundColor: "rgb(255,255,255,0.3)" }}>
                         <h3>Designed to get hired.</h3>
