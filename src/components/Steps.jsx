@@ -41,7 +41,9 @@ function Steps() {
         skills: [],
         summary: ''
     });
-    console.log(userInput);
+    const userSkillRef = React.useRef()
+
+    // console.log(userInput);
 
 
     const isStepOptional = (step) => {
@@ -82,6 +84,22 @@ function Steps() {
     const handleReset = () => {
         setActiveStep(0);
     };
+
+    // add skill
+    const addSkill = (inputSkill) => {
+        if (inputSkill) {
+            if (userInput.skills.includes(inputSkill)) {
+                alert("Given skill is already existing!!! Add another...")
+            } else {
+                // userInput.skills.push(inputSkill)
+                setUserInput({ ...userInput, skills: [...userInput.skills, inputSkill] })
+            }
+        }
+    }
+    // remove skill
+    const removeSkill = (skill) => {
+        setUserInput({ ...userInput, skills: userInput.skills.filter(item => item != skill) })
+    }
 
     /* render the content corresponding to array index */
     const renderStepArrayContent = (stepCount) => {
@@ -150,21 +168,29 @@ function Steps() {
                 <div>
                     <h3>Skills</h3>
                     <div className="d-flex align-items-center justify-content-between p-3">
-                        <TextField sx={{ width: '400px' }} id="standard-basic-skills" label="Add Skill" variant="standard" />
-                        <Button variant="text">Add</Button>
+                        {/* <TextField sx={{ width: '400px' }} id="standard-basic-skills" label="Add Skill" variant="standard" /> */}
+                        <input ref={userSkillRef} type="text" className='form-control' placeholder='Add Skills' />
+                        <Button onClick={() => addSkill(userSkillRef.current.value)} variant="text">Add</Button>
                     </div>
                     <h5>Suggestions :</h5>
                     <div className="d-flex flex-wrap justify-content-between my-3">
                         {
                             skillSugestionArray.map(userSkill => (
-                                <Button className='m-1' key={userSkill} variant="outlined">{userSkill}</Button>
+                                <Button onClick={() => addSkill(userSkill)} className='m-1' key={userSkill} variant="outlined">{userSkill}</Button>
                             ))
                         }
                     </div>
                     <h5>Added Skills :</h5>
                     <div className="d-flex flex-wrap justify-content-between my-3">
                         {/* span must duplicate according to the skills added by user */}
-                        <span className="btn btn-primary d-flex align-items-center justify-content-center my-1">React <button className="text-light btn">X</button></span>
+                        {
+                            userInput.skills.length > 0 ?
+                                userInput.skills.map(skill => (
+                                    <span key={skill} className="btn btn-primary d-flex align-items-center justify-content-center my-1">{skill} <button onClick={() => removeSkill(skill)} className="text-light btn">X</button></span>
+                                ))
+                                :
+                                <span>NIL</span>
+                        }
                     </div>
                 </div>
             )
@@ -174,7 +200,7 @@ function Steps() {
                     <div className="d-flex row p-3">
                         <TextField id="standard-basic-summary" label="Write a short summary of yourself " variant="standard"
                             onChange={e => setUserInput({ ...userInput, summary: e.target.value })}
-                            multiline rows={4}
+                            multiline rows={4} defaultValue={'MERN Stack Developer skilled in building responsive web apps using React.js, Node.js, Express.js, and MongoDB. Experienced in form validation, modular UI design, and deploying live projects via Netlify and Vercel. Passionate about creating accessible, beginner-friendly interfaces.'}
                             value={userInput.summary}
                         />
                     </div>
