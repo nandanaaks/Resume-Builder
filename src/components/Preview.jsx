@@ -17,8 +17,8 @@ function Preview({ userInput }) {
         <div>
             {
                 userInput.personalData.name != "" &&
-                <>
-                    <Stack direction={'row'} sx={{ justifyContent: 'flex-end' }}>
+                <div className='d-flex flex-column'>
+                    <Stack direction={'row'} sx={{ justifyContent: 'flex-end', mt: 5 }}>
                         <Stack direction={'row'} sx={{ alignItems: 'center' }}>
                             {/* download */}
                             <button className='btn fs-3 text-primary'><FaFileDownload /></button>
@@ -31,7 +31,7 @@ function Preview({ userInput }) {
                         </Stack>
                     </Stack>
                     <Box component="section" >
-                        <Paper elevation={3} sx={{ my: 5, p: 5, textAlign: 'center' }}>
+                        <Paper elevation={3} sx={{ mb: 5, p: 5, textAlign: 'center' }}>
                             <h2>{userInput.personalData.name}</h2>
                             <h6>{userInput.personalData.jobTitle}</h6>
                             <p><span>{userInput.personalData.location}</span> | <span>{userInput.personalData.email}</span> | <span>{userInput.personalData.phone}</span> | </p>
@@ -57,7 +57,7 @@ function Preview({ userInput }) {
                             </Stack>
                         </Paper>
                     </Box>
-                </>
+                </div>
             }
         </div>
     )

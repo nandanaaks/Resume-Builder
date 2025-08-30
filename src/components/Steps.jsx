@@ -6,19 +6,21 @@ import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
+import { addResumeAPI } from '../services/allAPI';
+import swal from 'sweetalert';
+
 
 const steps = ['Basic Informations', 'Contact Details', 'Education Details', 'Work Experience', 'Skills & Certifications', 'Review and Submit'];
 
-function Steps({userInput, setUserInput}) {
+function Steps({ userInput, setUserInput, setFinish }) {
     const skillSugestionArray = ['NODE JS', 'EXPRESS', 'MONGODB', 'REACT', 'ANGULAR', 'BOOTSTRAP', 'TAILWIND CSS', 'GIT',];
 
     const [activeStep, setActiveStep] = React.useState(0);
     const [skipped, setSkipped] = React.useState(new Set());
-   
+
     const userSkillRef = React.useRef()
 
     // console.log(userInput);
-
 
     const isStepOptional = (step) => {
         return step === 1;
@@ -174,13 +176,35 @@ function Steps({userInput, setUserInput}) {
                     <div className="d-flex row p-3">
                         <TextField id="standard-basic-summary" label="Write a short summary of yourself " variant="standard"
                             onChange={e => setUserInput({ ...userInput, summary: e.target.value })}
-                            multiline rows={4} defaultValue={'MERN Stack Developer skilled in building responsive web apps using React.js, Node.js, Express.js, and MongoDB. Experienced in form validation, modular UI design, and deploying live projects via Netlify and Vercel. Passionate about creating accessible, beginner-friendly interfaces.'}
-                            value={userInput.summary}
+                            multiline rows={4} value={userInput.summary}
+                            //  defaultValue={'MERN Stack Developer skilled in building responsive web apps using React.js, Node.js, Express.js, and MongoDB. Experienced in form validation, modular UI design, and deploying live projects via Netlify and Vercel. Passionate about creating accessible, beginner-friendly interfaces.'}
                         />
                     </div>
                 </div>
             )
             default: return null
+        }
+    }
+
+    // addresume
+    const handleAddResume = async () => {
+        // alert("API Called!!!")
+        // api call
+        const { name, jobTitle, location } = userInput.personalData
+        if (name && jobTitle && location) {
+            // alert("API Called!!!")
+            try {
+                const result = await addResumeAPI(userInput)
+                console.log(result);
+                swal("Success!", "Resume added successfully!", "success");
+                setFinish(true)
+            } catch (err) {
+                console.log(err);
+                swal("Error!", "Resume added failed!", "error");
+                setFinish(false)
+            }
+        } else {
+            alert("Fill the form")
         }
     }
     return (
@@ -236,9 +260,12 @@ function Steps({userInput, setUserInput}) {
                                 Skip
                             </Button>
                         )}
-                        <Button onClick={handleNext}>
-                            {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-                        </Button>
+
+                        {
+                            activeStep === steps.length - 1 ?
+                                <Button onClick={handleAddResume}>Finish</Button> :
+                                <Button onClick={handleNext}>Next</Button>
+                        }
                     </Box>
                 </React.Fragment>
             )}
