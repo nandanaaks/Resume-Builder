@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import { Link } from 'react-router-dom';
@@ -8,30 +8,75 @@ import Button from '@mui/material/Button';
 import { FaFileDownload } from "react-icons/fa";
 import { FaHistory } from "react-icons/fa";
 import Edit from './Edit';
+import html2canvas from 'html2canvas';
+import { jsPDF } from "jspdf";
+import { addDownloadHistoryAPI } from '../services/allAPI';
 
-
-function Preview({ userInput }) {
+function Preview({ userInput, setUserInput, finish, resumeId}) {
     // console.log(userInput);
 
+    const [downloadStatus, setDownloadStatus] = useState(false)
+
+  
+    
+    const downloadCV = async () => {
+        // get element for taking screenshot
+        // alert ("Download started")
+        const input = document.getElementById('result')
+        const canvas = await html2canvas(input, { scale: 2 })
+        const imgURL = canvas.toDataURL('image/png')
+        // console.log(imgURL);
+        // steps to create pdf 
+        const pdf = new jsPDF()
+        const pdfWidth = pdf.internal.pageSize.getWidth()
+        const pdfHeight = pdf.internal.pageSize.getHeight()
+        pdf.addImage(imgURL, 'PNG', 0, 0, pdfWidth, pdfHeight)
+        pdf.save('resume.pdf')
+
+        // get date
+        const localTimeData = new Date()
+        const timeStamp = `${localTimeData.toLocaleDateString()}, ${localTimeData.toLocaleTimeString()}`
+        // console.log(timeStamp);
+
+        //add downloaded CV to json using api call
+        try {
+            const result = await addDownloadHistoryAPI({ ...userInput, imgURL, timeStamp })
+            console.log(result);
+            setDownloadStatus(true)
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     return (
-        <div>
+        <>
             {
                 userInput.personalData.name != "" &&
                 <div className='d-flex flex-column'>
-                    <Stack direction={'row'} sx={{ justifyContent: 'flex-end', mt: 5 }}>
-                        <Stack direction={'row'} sx={{ alignItems: 'center' }}>
-                            {/* download */}
-                            <button className='btn fs-3 text-primary'><FaFileDownload /></button>
-                            {/* edit */}
-                            <div> <Edit /> </div>
-                            {/* history */}
-                            <Link to={'/history'} className='btn fs-3 text-primary'><FaHistory /></Link>
-                            {/* back */}
-                            <Link to={'/resume'} className='btn text-primary'>BACK</Link>
+                    {
+                        finish &&
+                        <Stack direction={'row'} spacing={2} sx={{ mt: 5, justifyContent: 'center' }}>
+                            <Stack direction={'row'} sx={{ alignItems: 'center' }}>
+                                {/* download */}
+                                <button onClick={downloadCV} className='btn fs-3 text-primary'><FaFileDownload /></button>
+                                 {/* edit */}
+                                        <div className='btn fs-3 text-primary'> <Edit setUpdateUserInput={setUserInput} resumeId={resumeId}/> </div>
+
+                                {
+                                    downloadStatus &&
+                                    <>
+                                        {/* history */}
+                                        <Link to={'/history'} className='btn fs-3 text-primary'><FaHistory /></Link>
+                                    </>
+
+                                }
+                                {/* back */}
+                                <Link to={'/resume'} className='btn text-primary'>BACK</Link>
+                            </Stack>
                         </Stack>
-                    </Stack>
-                    <Box component="section" >
-                        <Paper elevation={3} sx={{ mb: 5, p: 5, textAlign: 'center' }}>
+                    }
+                    <Box component="section" sx={{ display: "flex", justifyContent: "center", mb: 5 }}>
+                        <Paper id="result" elevation={3} sx={{ p:4, width: '500px', textAlign: 'center'}}>
                             <h2>{userInput.personalData.name}</h2>
                             <h6>{userInput.personalData.jobTitle}</h6>
                             <p><span>{userInput.personalData.location}</span> | <span>{userInput.personalData.email}</span> | <span>{userInput.personalData.phone}</span> | </p>
@@ -51,7 +96,7 @@ function Preview({ userInput }) {
                             <Divider sx={{ fontSize: '25px', marginBottom: '10px' }}>Skills</Divider>
                             <Stack justifyContent={'space-evenly'} direction="row" sx={{ flexWrap: 'wrap', gap: '8px' }}>
                                 {userInput.skills?.map(skill => (
-                                    <Button variant="contained">{skill}</Button>
+                                    <Button key={skill} variant="contained">{skill}</Button>
                                 ))}
 
                             </Stack>
@@ -59,7 +104,7 @@ function Preview({ userInput }) {
                     </Box>
                 </div>
             }
-        </div>
+        </>
     )
 }
 

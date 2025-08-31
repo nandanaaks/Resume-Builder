@@ -12,7 +12,7 @@ import swal from 'sweetalert';
 
 const steps = ['Basic Informations', 'Contact Details', 'Education Details', 'Work Experience', 'Skills & Certifications', 'Review and Submit'];
 
-function Steps({ userInput, setUserInput, setFinish }) {
+function Steps({ userInput, setUserInput, setFinish, setResumeId }) {
     const skillSugestionArray = ['NODE JS', 'EXPRESS', 'MONGODB', 'REACT', 'ANGULAR', 'BOOTSTRAP', 'TAILWIND CSS', 'GIT',];
 
     const [activeStep, setActiveStep] = React.useState(0);
@@ -176,8 +176,8 @@ function Steps({ userInput, setUserInput, setFinish }) {
                     <div className="d-flex row p-3">
                         <TextField id="standard-basic-summary" label="Write a short summary of yourself " variant="standard"
                             onChange={e => setUserInput({ ...userInput, summary: e.target.value })}
-                            multiline rows={4} value={userInput.summary}
-                            //  defaultValue={'MERN Stack Developer skilled in building responsive web apps using React.js, Node.js, Express.js, and MongoDB. Experienced in form validation, modular UI design, and deploying live projects via Netlify and Vercel. Passionate about creating accessible, beginner-friendly interfaces.'}
+                            multiline rows={4} defaultValue={'MERN Stack Developer skilled in building responsive web apps using React.js, Node.js, Express.js, and MongoDB. Experienced in form validation, modular UI design, and deploying live projects via Netlify and Vercel. Passionate about creating accessible, beginner-friendly interfaces.'}
+                            // value={userInput.summary}
                         />
                     </div>
                 </div>
@@ -195,7 +195,9 @@ function Steps({ userInput, setUserInput, setFinish }) {
             // alert("API Called!!!")
             try {
                 const result = await addResumeAPI(userInput)
-                console.log(result);
+                // console.log(result);
+                setResumeId(result?.data?.id)
+                console.log(result?.data?.id);
                 swal("Success!", "Resume added successfully!", "success");
                 setFinish(true)
             } catch (err) {
